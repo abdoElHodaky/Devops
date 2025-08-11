@@ -1,0 +1,29 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJSkV5bHF6OGROb0V3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TlRBM01qRXhNRE0wTlRaYUZ3MHpOVEEzTVRreE1ETTVOVFphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURHRHBWdTJRRUZIWnNyM3RuTkN6RUZYTXFHa3I1Wk9VeVhLTjNieWlYdTY3M1B3K3dBYTJBT0pzVG8Ka0V5M3FZRjFoVC92c203ZUdoZmlGTDB1cEkzSEpkRTg0YU1jQisvdERZVjJaQ2poNnQ0SFc3VlJzS0puQU9VdAoyM1hTNDZoSjRsWU81ZmVkZUprK2NYODl5SEVNR01STnhvWUxjN3BPVDVZYkQzcWdocVlwbFRodWRUelQvZ0RjClN0TThvRlZicFBDM2d5RlRETkIyQnI4NHpPRjY0MVJMMHZLT2JWQ29HLzh0NzVCTDVGV1ZsWWJ1bE8walE3bTAKOGxPS3p1TkZVd0VQeStjcHRRajhqVFVKQ1RuUDVBSGFWaUkxWDZTcmZ4RFhnSHhkVC9tTVprYkZaNWN1bUpjQwpiOEtnUjBZWWkzVUk4TnFZQ3Znb2d2Z2huK2huQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUVjBZa2RFZk1HWnI4eFRJZmwra0NNZVFJL0hEQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ1NVaSsyTnNhdApvelJ3R08vSzN6VE12a3YzT0t4Ty9qU2docUlGdnJtc1VzYkR0YjZScUg5VnRSTC9GWnR4ckRHdnpIUHhETjJ3CkJ0S29LWXBuQ3VoL3FQK1JEUmpaMTQxUDlXZ3hma2FzbjZDY1VUQUR4YzZhVUNkMnVPMUxXYlBZOEdCUWxrRTEKMDVEdisraG10UEFXRWR3Qy9aQjB4Wm5RdG8zcGw3czhtKzNGVkVtMCtuS21QL1VoRDdxUndVK1MrUHJ3TkdieAp4SHhiZnNPMitMOW9rU2JQUGIxUXd4SGIrVWFVaTlXZjJ6MGlsd216cDlEYmhFTmRCL2h6VkNyV3R3aEJWL2pjCmthRmF3VUlManJPcUU0elY3QnhZV25hT1V3RGM5YzNaM3dHQSthYnJmMlg2cTExQ2tZREVZUVdqTkFtVnkrZFcKeTZ1RnZIRnpRNk9vCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    server: https://09068C615A3D71ECAD6937D95C2F4197.yl4.eu-central-1.eks.amazonaws.com
+  name: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+contexts:
+- context:
+    cluster: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+    user: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+  name: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+current-context: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+kind: Config
+preferences: {}
+users:
+- name: arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - eu-central-1
+      - eks
+      - get-token
+      - --cluster-name
+      - attractive-duck
+      - --output
+      - json
+      command: aws
