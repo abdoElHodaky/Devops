@@ -1,0 +1,91 @@
+name: 'kube'
+
+on:
+  workflow_run:
+   workflows: ["Terraform-Plan"]
+   types: [completed]
+
+
+env:
+  ARKADE_BIN: " /home/runner/.arkade/bin" 
+  AWS_ACCESS_KEY_ID: ${{secrets.TF_VAR_AWS_ACCESS_KEY}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.TF_VAR_AWS_ACCESS_SECRET}}
+  AWS_REGION: ${{secrets.TF_VAR_AWS_REGION}}
+  TF_VAR_EKS_CLUSTER_NAME: ${{secrets.TF_VAR_EKS_CLUSTER_NAME}}
+  TF_VAR_GHCR_PAT: ${{secrets.TF_VAR_GHCR_PAT}}
+  TF_VAR_DOCKER_PAT: ${{secrets.TF_VAR_DOCKER_PAT}}
+  #MONGO_URI: ${{secrets.MONGO_URI}}
+jobs:
+  arkade:
+     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+     runs-on: ubuntu-latest
+     steps:
+        -  run: sleep 120s
+        - 
+           name: "setup arkade"
+           uses: alexellis/setup-arkade@v1
+        
+        - 
+           name: "arkade Init"
+           uses: alexellis/arkade-get@master
+           with:
+            kubectl: latest
+            helm: latest
+            
+  #terraform:
+  # uses: ./.github/workflows/terraform-pa.yml
+  # secrets: inherit
+  kube:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs:
+     # - terraform
+      - arkade 
+    name: 'Kube'
+    runs-on: ubuntu-latest
+    
+    #environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+        
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+   # - name: Copy files
+    #  working-directory:  ${{ env.WORK_DIR }}/local_checkout
+    #  run: cp -r .github "$GITHUB_WORKSPACE/"                    
+
+   # - uses: abdoElHodaky/Devops/.github/workflows/terraform-pa.yml@main
+    - run: |
+       git pull
+    - name: kube secrets
+      run: | 
+        cd terraform 
+    # kubectl create secret generic mongodb-secret --from-env-file=./app.env  --kubeconfig="./kubeconfig.yaml"
+    
+     #   kubectl create secret docker-registry dockersecret \
+      #      --docker-username=abdoelhodaky \
+      #      --docker-token=${{env.TF_VAR_DOCKER_PAT}} --kubeconfig="./kubeconfig.yaml"
+              
+     # kubectl config set-context "arn:aws:eks:eu-central-1:593055205567:cluster/attractive-duck" --kubeconfig="./kubeconfig.yaml"
+           
+    - run: |
+         cd terraform
+         
+         kubectl get svc nestcms-loadbalancer  -o yaml --kubeconfig="./kubeconfig.yaml" > nestcms-lb.yaml
+         
+    #   kubectl get endpointslices -l kubernetes.io/service-name=nestcms  --kubeconfig="./kubeconfig.yaml"
+    #   kubectl exec nestcms -i -t -- ls -t ./  --kubeconfig="./kubeconfig.yaml"
+    - name: Create ingress
+      run: |
+        cd terraform
+         
+         kubectl get ingress nestcms-ingress -o yaml --kubeconfig="./kubeconfig.yaml" > nestcms-ingress.yaml
+      
+    - name: Commit and Push
+      uses: GuillaumeFalourd/git-commit-push@v1.3
+      with:
+          commit_message: "Push changes"
+          target_branch: ${{github.ref}}
+          access_token: ${{ secrets.GITHUB_TOKEN }}

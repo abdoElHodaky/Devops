@@ -1,0 +1,51 @@
+version: '2.1'
+orbs:
+  kube: twdps/kube-ops@1.0.0
+jobs:
+  ClusterFluxProj:
+    machine:
+      image: 'ubuntu-2204:current'
+    resource_class: large
+    steps:
+      - checkout
+      - kube/install:
+          use-sudo: 'true'
+          flux-version: 2.6.4
+          kubectl-version: 1.32.4
+          kind-version: 0.29.0
+      - run:
+          name: Kind create cluster
+          command: |
+            kind create cluster --name fluxcd
+            kubectl config set-context  kind-fluxcd
+             git clone https://$GITHUB_TOKEN@github.com/abdoElHodaky/Fluxcd.git
+             cd Fluxcd/clusters/fluxcd/flux-system
+             kubectl apply -f gotk-components.yaml
+             kubectl apply -f gotk-sync.yaml
+             sleep 120s 
+     
+      - run: 
+          name: Flux app init
+          command: |
+           cd Fluxcd/clusters/fluxcd/ 
+           kubectl apply -f sec.yaml && kubectl apply -f secrets.yaml 
+           kubectl apply -f nestcms-source.yaml && kubectl apply -f nestcms-kustomize.yaml
+           flux reconcile kustomization nestcms
+           kubectl get deployment nestcms -o yaml >  ./kustomize/nestcms-deploy.yaml
+           sleep 70s
+      - run: 
+         name: Apply kustomization
+         command: |
+          cd Fluxcd/clusters/fluxcd/kustomize
+          kubectl apply -k . --server-side --force-conflicts
+          kubectl rollout restart deployment nestcms && sleep 180s
+          kubectl get deployment nestcms -o yaml > nestcms-kdeploy.yaml
+          cd .. && git add . -A
+          git commit -m "push change" 
+          git push 
+  
+workflows:
+  version: 2
+  fluxcdworkflow:
+    jobs:
+      - ClusterFluxProj

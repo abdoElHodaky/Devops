@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/subnets: subnet-069d27f47d7e62de8,subnet-0b2694ce6b30df1d9,subnet-0c061308d068204dd
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"alb.ingress.kubernetes.io/subnets":"subnet-069d27f47d7e62de8,subnet-0b2694ce6b30df1d9,subnet-0c061308d068204dd"},"name":"nestcms-ingress","namespace":"default"},"spec":{"ingressClassName":"alb","rules":[{"host":"nestcms.test","http":{"paths":[{"backend":{"service":{"name":"nestcms-clusterip","port":{"number":3000}}},"path":"/","pathType":"Prefix"}]}}]}}
+  creationTimestamp: "2025-07-31T06:29:52Z"
+  finalizers:
+  - ingress.eks.amazonaws.com/resources
+  generation: 3
+  name: nestcms-ingress
+  namespace: default
+  resourceVersion: "1819018"
+  uid: 8b041ec3-737d-4de7-8dbe-13f44db5c044
+spec:
+  ingressClassName: alb
+  rules:
+  - host: nestcms.test
+    http:
+      paths:
+      - backend:
+          service:
+            name: nestcms-clusterip
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: k8s-default-nestcmsi-4df2a253a0-1633737761.eu-central-1.elb.amazonaws.com
